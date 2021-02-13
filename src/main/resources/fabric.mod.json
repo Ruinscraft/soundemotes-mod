@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "soundemotes",
+  "version": "${version}",
+
+  "name": "Sound Emotes by Ruinscraft",
+  "description": "Use Sound Emotes on Ruinscraft Minecraft servers!",
+  "authors": [
+    "royalkingkb"
+  ],
+  "contact": {
+    "homepage": "https://ruinscraft.com",
+    "sources": "https://github.com/Ruinscraft"
+  },
+
+  "license": "CC0-1.0",
+  "icon": "assets/soundemotes/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.ruinscraft.soundemotes.SoundEmotesMod"
+    ]
+  },
+  "mixins": [
+    "modid.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
