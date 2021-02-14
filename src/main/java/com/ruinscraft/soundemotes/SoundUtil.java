@@ -84,12 +84,12 @@ public final class SoundUtil {
         MinecraftClient client = MinecraftClient.getInstance();
         SoundManager soundManager = client.getSoundManager();
         if (soundManager == null) return null;
-//        Field soundSystemField = soundManager.getClass().getDeclaredField("field_5590");
-        Field soundSystemField = soundManager.getClass().getDeclaredField("soundSystem");
+        Field soundSystemField = soundManager.getClass().getDeclaredField("field_5590");
+//        Field soundSystemField = soundManager.getClass().getDeclaredField("soundSystem");
         soundSystemField.setAccessible(true);
         SoundSystem soundSystem = (SoundSystem) soundSystemField.get(soundManager);
-//        Field soundEngineField = soundSystem.getClass().getDeclaredField("field_18945");
-        Field soundEngineField = soundSystem.getClass().getDeclaredField("soundEngine");
+        Field soundEngineField = soundSystem.getClass().getDeclaredField("field_18945");
+//        Field soundEngineField = soundSystem.getClass().getDeclaredField("soundEngine");
         soundEngineField.setAccessible(true);
         SoundEngine soundEngine = (SoundEngine) soundEngineField.get(soundSystem);
         return soundEngine;
