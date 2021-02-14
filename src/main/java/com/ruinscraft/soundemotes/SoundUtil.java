@@ -1,6 +1,5 @@
 package com.ruinscraft.soundemotes;
 
-import com.google.common.collect.Sets;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.*;
 import net.minecraft.util.math.Vec3d;
@@ -9,19 +8,16 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class SoundUtil {
 
     private static Map<String, StaticSound> soundCache;
-    private static Set<Source> activeSources;
     private static SoundEngine soundEngine;
 
     public static void init() {
         soundCache = new ConcurrentHashMap<>();
-        activeSources = Sets.newIdentityHashSet();
     }
 
     public static void playSound(PlayedSoundEmote emote) {
@@ -68,7 +64,6 @@ public final class SoundUtil {
             }
             soundEngine.release(source);
         });
-        activeSources.add(source);
     }
 
     private static CompletableFuture<StaticSound> fetchSound(PlayedSoundEmote emote) {
