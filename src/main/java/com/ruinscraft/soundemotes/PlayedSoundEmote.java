@@ -1,5 +1,7 @@
 package com.ruinscraft.soundemotes;
 
+import net.minecraft.util.math.Vec3d;
+
 public class PlayedSoundEmote {
 
     private String name;
@@ -40,6 +42,10 @@ public class PlayedSoundEmote {
 
     public int getZ() {
         return z;
+    }
+
+    public Vec3d getVec3d() {
+        return new Vec3d(x, y, z);
     }
 
 }
