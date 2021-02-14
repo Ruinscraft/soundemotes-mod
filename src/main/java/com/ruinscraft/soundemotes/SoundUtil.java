@@ -66,7 +66,6 @@ public final class SoundUtil {
                     e.printStackTrace();
                 }
             }
-            System.out.println("Releasing source");
             soundEngine.release(source);
         });
         activeSources.add(source);
