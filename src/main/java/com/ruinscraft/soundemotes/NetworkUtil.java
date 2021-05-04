@@ -7,6 +7,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 public final class NetworkUtil {
 
@@ -33,7 +34,7 @@ public final class NetworkUtil {
                 try {
                     JsonObject playedSoundEmoteJson = JSON_PARSER.parse(playedSoundEmoteJsonRaw).getAsJsonObject();
                     PlayedSoundEmote playedSoundEmote = deserializePlayedSoundEmote(playedSoundEmoteJson);
-                    SoundUtil.playSound(playedSoundEmote);
+                    SoundUtil.playSoundEmote(playedSoundEmote);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -44,11 +45,15 @@ public final class NetworkUtil {
     public static PlayedSoundEmote deserializePlayedSoundEmote(JsonObject playedSoundEmoteJson) {
         String soundEmoteName = playedSoundEmoteJson.get("sound_emote").getAsJsonObject().get("name").getAsString();
         String soundEmoteUrl = playedSoundEmoteJson.get("sound_emote").getAsJsonObject().get("url").getAsString();
-        String world = playedSoundEmoteJson.get("world").getAsString();
-        int x = playedSoundEmoteJson.get("x").getAsInt();
-        int y = playedSoundEmoteJson.get("y").getAsInt();
-        int z = playedSoundEmoteJson.get("z").getAsInt();
-        return new PlayedSoundEmote(soundEmoteName, soundEmoteUrl, world, x, y, z);
+        String entityIdString = playedSoundEmoteJson.get("entity_id").getAsString();
+        UUID entityId;
+        try {
+            entityId = UUID.fromString(entityIdString);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return new PlayedSoundEmote(soundEmoteName, soundEmoteUrl, entityId);
     }
 
 }
