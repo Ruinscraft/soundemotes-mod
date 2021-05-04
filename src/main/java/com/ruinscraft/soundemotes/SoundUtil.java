@@ -18,19 +18,21 @@ public final class SoundUtil {
     private static SoundEngine soundEngine;
 
     public static boolean init() {
+        if (MinecraftClient.getInstance().world == null) {
+            return false;
+        }
+
         if (init) {
             return true;
         }
 
         soundCache = new ConcurrentHashMap<>();
 
-        if (MinecraftClient.getInstance().world != null) {
-            try {
-                soundEngine = getSoundEngine();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return init = false;
-            }
+        try {
+            soundEngine = getSoundEngine();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
 
         return init = true;
