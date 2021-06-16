@@ -17,14 +17,9 @@ public final class SoundUtil {
     private static Map<String, StaticSound> soundCache;
     private static SoundEngine soundEngine;
 
-    public static boolean init() {
-        if (MinecraftClient.getInstance().world == null) {
-            return false;
-        }
-
-        if (init) {
-            return true;
-        }
+    private static boolean init() {
+        if (MinecraftClient.getInstance().world == null) return false;
+        if (init) return true;
 
         soundCache = new ConcurrentHashMap<>();
 
@@ -38,55 +33,53 @@ public final class SoundUtil {
         return init = true;
     }
 
-    private static CompletableFuture<StaticSound> fetchStaticSound(PlayedSoundEmote emote) {
+    private static CompletableFuture<StaticSound> fetchStaticSound(SoundEmotesMod.PlayedSoundEmote emote) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                URL url = new URL(emote.getUrl());
+                URL url = new URL(emote.url);
                 OggAudioStream oggStream = new OggAudioStream(url.openStream());
                 ByteBuffer byteBuffer = oggStream.getBuffer();
                 return new StaticSound(byteBuffer, oggStream.getFormat());
             } catch (Exception e) {
-                System.out.println("Could not fetch sound emote: " + emote.getUrl());
+                System.out.println("Could not fetch sound emote: " + emote.url);
                 return null;
             }
         });
     }
 
-    public static void playSoundEmote(PlayedSoundEmote emote) {
-        if (!init()) {
-            return;
-        }
+    public static void playSoundEmote(SoundEmotesMod.PlayedSoundEmote emote) {
+        if (!init()) return;
 
-        if (soundCache.containsKey(emote.getName())) {
+        if (soundCache.containsKey(emote.name)) {
             Entity tracked = null;
 
             for (Entity entity : MinecraftClient.getInstance().world.getEntities()) {
-                if (entity.getUuid().equals(emote.getEntityId())) {
+                if (entity.getUuid().equals(emote.entityId)) {
                     tracked = entity;
                 }
             }
 
             // Could not find entity
-            if (tracked == null) {
-                return;
-            }
+            if (tracked == null) return;
 
             try {
-                playStaticSound(soundCache.get(emote.getName()), tracked);
+                playStaticSound(soundCache.get(emote.name), tracked);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
             fetchStaticSound(emote).thenAccept(staticSound -> {
                 if (staticSound == null) return;
-                soundCache.put(emote.getName(), staticSound);
+                soundCache.put(emote.name, staticSound);
                 playSoundEmote(emote);
             });
         }
     }
 
+    // Requires mono channel vorbis .ogg
     private static void playStaticSound(StaticSound staticSound, Entity tracked) {
         Source source = soundEngine.createSource(SoundEngine.RunMode.STATIC);
+        if (source == null) return;
         source.setBuffer(staticSound);
         // Set initial position, will continuously update later
         source.setPosition(tracked.getPos());
@@ -98,7 +91,7 @@ public final class SoundUtil {
                 source.setPosition(tracked.getPos());
 
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(50);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -119,8 +112,7 @@ public final class SoundUtil {
         Field soundEngineField = soundSystem.getClass().getDeclaredField("field_18945");
 //        Field soundEngineField = soundSystem.getClass().getDeclaredField("soundEngine");
         soundEngineField.setAccessible(true);
-        SoundEngine soundEngine = (SoundEngine) soundEngineField.get(soundSystem);
-        return soundEngine;
+        return (SoundEngine) soundEngineField.get(soundSystem);
     }
 
 }
